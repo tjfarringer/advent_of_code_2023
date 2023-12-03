@@ -63,7 +63,7 @@ def check_neighbors(data, line_number, entry_nbr):
     if entry_nbr+1 < len(data[0]):
         if is_symbol(data[line_number][entry_nbr+1]):
             return True
-    if line_number + 1 < len(data[0]):
+    if (line_number + 1) < len(data):
         for x in range(entry_nbr-1, entry_nbr+1):
             if x >= 0 and x < len(data[0]):
                 if is_symbol(data[line_number+1][x]):
