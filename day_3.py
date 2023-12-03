@@ -30,7 +30,7 @@ def day_three(path):
             # first_number_indx_rng[1] += search_range
 
             updated_indx = (
-                first_number_indx_rng[0]+search_range, first_number_indx_rng[1]+search_range)
+                first_number_indx_rng[0]+search_range, first_number_indx_rng[1]+search_range+1)
 
             # 2 -- check if that number is surrounded by a symbol
             surrounded = utilities.surrounded_by_symbol(
@@ -52,7 +52,7 @@ print(day_three("day_3_input.txt"))
 # tuple_returned = utilities.find_first_int("Hel123lo", reversed=False, letters_as_words=False,
 #                                           find_entire_number=True, indices_rather_than_number=True)
 
-# print(tuple_returned[0])
+# print(tuple_returned)
 # print(tuple_returned[1])
 # find_first_int(line, reversed=False, letters_as_words=False, find_entire_number=False, indices_rather_than_number=False):
 
