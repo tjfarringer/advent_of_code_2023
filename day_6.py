@@ -29,21 +29,15 @@ def day_six_part_one(path, testing=False):
     for race in puzzle_input:
         num_ways_to_win = 0
         for ts in range(1, race[0]+1):
-            # print(ts)
-            # ts=2
             distance = ts * (race[0]-ts)
             if distance > race[1]:
                 num_ways_to_win += 1
-            # print(f'ts: {ts}. distance: {distance}')
         num_ways_to_win_per_race.append(num_ways_to_win)
-        # print('===========================')
     return math.prod(num_ways_to_win_per_race)
 
 
 def day_six_part_two(path, testing=False):
-    num_ways_to_win = 0
-    first_ts_past_record = 0
-    last_ts_past_record = 0
+    first_ts_past_record = last_ts_past_record = 0
 
     with open(path, "r") as f:
         lines = [line.strip() for line in f.readlines()]
