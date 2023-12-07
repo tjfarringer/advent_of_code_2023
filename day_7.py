@@ -22,12 +22,12 @@ import numpy as np
 
 
 def find_hand_type(hand, part_one=False):
-    # pass
     char_count = Counter(hand)
     most_common_count = char_count.most_common(1)[0][1]
-    # if not part_one and 'J' in char_count and len(char_count) > 1:
-    #     most_common_count = char_count.pop(
-    #         'J', 0) + char_count.most_common(1)[0][1]
+    # if there is a joker add it to the most common card
+    if not part_one and 'J' in char_count and len(char_count) > 1:
+        most_common_count = char_count.pop(
+            'J', 0) + char_count.most_common(1)[0][1]
     num_unique_chars = len(char_count)
     match most_common_count:
         case 5:
@@ -47,9 +47,14 @@ def find_hand_type(hand, part_one=False):
             return '2'
 
 
-def convert_hand_to_nums(hand):
+def convert_hand_to_nums(hand, part_one):
     hand_sum = 0
-    digits = '23456789TJQKA'
+    if part_one:
+        digits = '23456789TJQKA'
+    else:
+        # move joker to be the lowest ranked card for the tie breaker
+        digits = 'J23456789TQKA'
+
     for idx, card in enumerate(hand[::-1]):
         hand_sum += digits.index(card) * (14 ** idx)
 
@@ -57,39 +62,25 @@ def convert_hand_to_nums(hand):
     return hand_sum
 
 
-def day_seven(path, testing=False):
+def day_seven(path, testing=False, part_one=False):
     total_winnings = 0
     hand_types = []
     with open(path, "r") as f:
-        # lines = [line.strip() for line in f.readlines()]
-        # hand, bid = lines.split(" ")[0], lines.split(" ")[1]
-        # print(hand, bid)
         hands, bids = zip(*[(handstr, int(bidstr)) for handstr,
                           bidstr in map(lambda line: line.strip().split(), f.readlines())])
-        # time_line, dist_line = [line_nums.split() for line_nums in [
-        #     line.split(" ")[1].strip() for line in lines]]
-        # time_line = [int(num) for num in time_line]
-        # dist_line = [int(num) for num in dist_line]
-        # puzzle_input = list(zip(time_line, dist_line))
-        # print(hands, bids)
-
         for hand in range(0, len(hands)):
             hand_type = find_hand_type(hands[hand])
-            hand_type_combined = convert_hand_to_nums(hand_type + hands[hand])
+            hand_type_combined = convert_hand_to_nums(
+                hand_type + hands[hand], part_one)
             hand_types.append(hand_type_combined)
 
         _, bids_sorted = zip(
             *sorted(zip(hand_types, bids), key=lambda x: x[0]))
 
-        # print(np.arange(1, len(bids_sorted) + 1))
-
-        # print(bids_sorted)
-
         for x in range(0, len(hand_types)):
-            # print(f'x: {x+1}. bid: {bids_sorted[x]}')
             total_winnings += (x+1)*bids_sorted[x]
 
     return total_winnings
 
 
-print(day_seven("day_7_input.txt"))
+print(day_seven("day_7_input.txt", part_one=False))
