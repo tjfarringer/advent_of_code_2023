@@ -11,24 +11,34 @@ import time
 # Pick node with the longest steps-so-far
 
 
-def check_neighbors(cur_node, grid, node_queue, end, valid_paths, distance_dict):
+def get_options(grid, cur_line, cur_entry, part_two):
+    # Actually he can only go N, S, E, or W
+    if not part_two:
+        if grid[cur_line][cur_entry] in ['>']:
+            options = [(cur_line, cur_entry+1)]
+        elif grid[cur_line][cur_entry] in ['<']:
+            options = [(cur_line, cur_entry-1)]
+        elif grid[cur_line][cur_entry] in ['^']:
+            options = [(cur_line - 1, cur_entry)]
+        elif grid[cur_line][cur_entry] in ['v']:
+            options = [(cur_line+1, cur_entry)]
+
+        return options
+
+    if grid[cur_line][cur_entry] in ['.', '>', '<', '<', 'v']:
+        options = [(cur_line-1, cur_entry), (cur_line+1, cur_entry),
+                   (cur_line, cur_entry-1), (cur_line, cur_entry+1)]
+
+    return options
+
+
+def check_neighbors(cur_node, grid, node_queue, end, valid_paths, distance_dict, part_two):
     priority = cur_node[0]
     cur_line = cur_node[1]
     cur_entry = cur_node[2]
     prev_path = cur_node[3]
 
-    # Actually he can only go N, S, E, or W
-    if grid[cur_line][cur_entry] in ['.']:
-        options = [(cur_line-1, cur_entry), (cur_line+1, cur_entry),
-                   (cur_line, cur_entry-1), (cur_line, cur_entry+1)]
-    elif grid[cur_line][cur_entry] in ['>']:
-        options = [(cur_line, cur_entry+1)]
-    elif grid[cur_line][cur_entry] in ['<']:
-        options = [(cur_line, cur_entry-1)]
-    elif grid[cur_line][cur_entry] in ['^']:
-        options = [(cur_line - 1, cur_entry)]
-    elif grid[cur_line][cur_entry] in ['v']:
-        options = [(cur_line+1, cur_entry)]
+    options = get_options(grid, cur_line, cur_entry, part_two)
 
     for o in options:
         new_path = deepcopy(prev_path)
@@ -45,16 +55,16 @@ def check_neighbors(cur_node, grid, node_queue, end, valid_paths, distance_dict)
             new_path.append((o[0], o[1]))
             # If this is the longest path to hit this tile then continue searching
             # otherwise you can stop searching
-            if distance_dict.get((o[0], o[1]), 0) < len(new_path):
-                priority = -1*len(new_path)
-                node_queue.put((priority, o[0], o[1], new_path))
-                distance_dict[o[0], o[1]] = len(new_path)
+            # if distance_dict.get((o[0], o[1]), 0) < len(new_path):
+            priority = -1*len(new_path)
+            node_queue.put((priority, o[0], o[1], new_path))
+            distance_dict[o[0], o[1]] = len(new_path)
             # else:
             #     paths_stopped += 1
             #     print(f'stopped')
 
 
-def day_23(path):
+def day_23(path, part_two=False):
     # node_queue = Queue()
     node_queue = PriorityQueue()
     valid_paths = []
@@ -74,9 +84,9 @@ def day_23(path):
         if node_queue.qsize() > 1:
             pass
         cur_node = node_queue.get()
-        if cur_node[1] == 5 and cur_node[2] == 3:
-            pass
-        if check_neighbors(cur_node, grid, node_queue, end, valid_paths, distance_dict):
+        # if cur_node[1] == 5 and cur_node[2] == 3:
+        #     pass
+        if check_neighbors(cur_node, grid, node_queue, end, valid_paths, distance_dict, part_two):
             break
 
     if len(valid_paths) > 0:
@@ -91,6 +101,6 @@ def day_23(path):
 
 start_time = time.time()
 # Part 1 answer: 2238.. right now 134 seconds
-# day_23("./inputs/day_23_sample.txt")
-day_23("./inputs/day_23_input.txt")
+# day_23("./inputs/day_23_sample.txt", part_two=True)
+day_23("./inputs/day_23_input.txt", part_two=True)
 print("--- %s seconds ---" % (time.time() - start_time))
